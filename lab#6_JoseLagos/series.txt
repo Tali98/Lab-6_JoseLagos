@@ -1,0 +1,1 @@
+001;Terror oscuro;12;terror;ingles;ingles;1.00;5;mala;JVVIDALS;JT;Nahum Lagos,Hernan Lagos;23321;gay;12;terror;ingles,espanol;ingles;1.00;4;mala;Tali;Diego;Vidal, Andre;2312;Hola;12;Terror;ingles ;ingles;1.21;5;mala;JJV;Tali;Henry;231;Amor a ciegas;12;comedia;espanol;espanol;1.00;4;mala;Trima;Kenneth;Manuel,Diego;
