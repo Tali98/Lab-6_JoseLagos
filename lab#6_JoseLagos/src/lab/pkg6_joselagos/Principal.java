@@ -757,13 +757,22 @@ public class Principal extends javax.swing.JFrame {
         Scanner sc = null;
         File archivito = null;
         boolean v = false;
+        c = 0;
         try {
             archivito = new File("./user.txt");
             sc = new Scanner(archivito);
+            DefaultListModel modelo = (DefaultListModel) jl_personas.getModel();
+            DefaultTreeModel modeloARBOL1 = (DefaultTreeModel) jt_series.getModel();
+        DefaultMutableTreeNode raiz1 = (DefaultMutableTreeNode) modeloARBOL1.getRoot();
+            DefaultTreeModel modeloARBOL = (DefaultTreeModel) jt_personas.getModel();
+            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) modeloARBOL.getRoot();
+            DefaultListModel modelo1 = (DefaultListModel) jl_series.getModel();
+            modelo1.clear();
             sc.useDelimiter(";");
+            modelo.clear();
+            modeloARBOL.reload();
             while (sc.hasNext()) {
                 String name = sc.next();
-                sc.next();
                 String pass = sc.next();
                 if (name.equals(jt_user.getText()) && pass.equals(jp_pass.getText())) {
                     v = true;
@@ -782,11 +791,35 @@ public class Principal extends javax.swing.JFrame {
                         String prod = sc2.next();
                         String direct = sc2.next();
                         String actores = sc2.next();
-                        DefaultListModel modelo = (DefaultListModel) jl_personas.getModel();
                         modelo.addElement(new Peliculas(code, peli, cate, time, rate, prod, direct));
                         String name2 = ((Peliculas) modelo.get(0)).getNombre();
-                        System.out.println(name2);
                         jl_personas.setModel(modelo);
+                        for (int a = 0; a < users.get(c).getFav().size(); a++) {
+                            String categoria, nombre;
+                            int rating;
+                            categoria = users.get(c).getFav().get(a).getCategoria();
+                            nombre = users.get(c).getFav().get(a).getNombre();
+                            rating = users.get(c).getFav().get(a).getRating();
+                            String id = users.get(c).getFav().get(a).getId();
+                            double duracion = users.get(c).getFav().get(a).getDuracion();
+                            String productora = users.get(c).getFav().get(a).getProductora();
+                            String director = users.get(c).getFav().get(a).getDirector();
+                            int centinela = -1;
+                            for (int i = 0; i < raiz.getChildCount(); i++) {
+                                if (raiz.getChildAt(i).toString().equals(categoria)) {
+                                    DefaultMutableTreeNode p = new DefaultMutableTreeNode(new Peliculas(id, nombre, categoria, duracion, rating, productora, director));
+                                    ((DefaultMutableTreeNode) raiz.getChildAt(i)).add(p);
+                                    centinela = 1;
+                                }
+                            }
+                            if (centinela == -1) {
+                                DefaultMutableTreeNode n = new DefaultMutableTreeNode(categoria);
+                                DefaultMutableTreeNode p = new DefaultMutableTreeNode(new Peliculas(id, nombre, categoria, duracion, rating, productora, director));
+                                n.add(p);
+                                raiz.add(n);
+                            }
+                            modeloARBOL.reload();
+                        }
                     }
                     File archivo2 = new File("./series.txt");
                     Scanner sc3 = new Scanner(archivo2);
@@ -804,9 +837,36 @@ public class Principal extends javax.swing.JFrame {
                         String prod = sc3.next();
                         String direct = sc3.next();
                         String actores = sc3.next();
-                        DefaultListModel modelo = (DefaultListModel) jl_series.getModel();
-                        modelo.addElement(new Series(code, peli, cate, time, rate, prod, direct, temp));
-                        jl_series.setModel(modelo);
+
+                        modelo1.addElement(new Series(code, peli, cate, time, rate, prod, direct, temp));
+                        jl_series.setModel(modelo1);
+                        for (int a = 0; a < users.get(c).getFavo().size(); a++) {
+                            String categoria = users.get(c).getFavo().get(a).getCategoria();
+                            String nombre = users.get(c).getFavo().get(a).getNombre();
+                            int rating = users.get(c).getFavo().get(a).getRating();
+                            String id = users.get(c).getFavo().get(a).getId();
+                            double duracion = users.get(c).getFavo().get(a).getDuracion();
+                            String productora = users.get(c).getFavo().get(a).getProductora();
+                            String director = users.get(c).getFavo().get(a).getDirector();
+                            int temp2 = users.get(c).getFavo().get(a).getTemp();
+                            int centinela = -1;
+                            for (int i = 0; i < raiz1.getChildCount(); i++) {
+                                if (raiz1.getChildAt(i).toString().equals(categoria)) {
+                                    DefaultMutableTreeNode p = new DefaultMutableTreeNode(new Series(id, nombre, categoria, duracion, rating, productora, director, temp));
+                                    ((DefaultMutableTreeNode) raiz1.getChildAt(i)).add(p);
+                                    centinela = 1;
+                                }
+                            }
+                            if (centinela == -1) {
+                                DefaultMutableTreeNode n = new DefaultMutableTreeNode(categoria);
+                                DefaultMutableTreeNode p = new DefaultMutableTreeNode(new Series(id, nombre, categoria, duracion, rating, productora, director, temp));
+                                n.add(p);
+                                raiz1.add(n);
+                            }
+                            modeloARBOL1.reload();
+
+                        }
+
                     }
                     jd_pelis.setModal(true);
                     jd_pelis.pack();
@@ -816,6 +876,8 @@ public class Principal extends javax.swing.JFrame {
                 }
                 sc.next();
                 sc.next();
+                sc.next();
+                c++;
             }
             if (v == false) {
                 JOptionPane.showMessageDialog(this, "NO EXISTE ESE USUARIO");
@@ -889,6 +951,7 @@ public class Principal extends javax.swing.JFrame {
                 String name2 = ((Peliculas) modelo.get(0)).getNombre();
                 System.out.println(name2);
                 jl_pelieli.setModel(modelo);
+
             }
             File archivo2 = new File("./series.txt");
             Scanner sc3 = new Scanner(archivo2);
@@ -974,6 +1037,12 @@ public class Principal extends javax.swing.JFrame {
             double duracion = ((Peliculas) modeloLISTA.get(jl_personas.getSelectedIndex())).getDuracion();
             String productora = ((Peliculas) modeloLISTA.get(jl_personas.getSelectedIndex())).getProductora();
             String director = ((Peliculas) modeloLISTA.get(jl_personas.getSelectedIndex())).getDirector();
+            users.get(c).getFav().add(new Peliculas(id, nombre, categoria, duracion, rating, productora, director));
+            try {
+                escribirArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
             int centinela = -1;
             for (int i = 0; i < raiz.getChildCount(); i++) {
                 if (raiz.getChildAt(i).toString().equals(categoria)) {
@@ -1012,6 +1081,13 @@ public class Principal extends javax.swing.JFrame {
             String productora = ((Series) modeloLISTA.get(jl_series.getSelectedIndex())).getProductora();
             String director = ((Series) modeloLISTA.get(jl_series.getSelectedIndex())).getDirector();
             int temp = ((Series) modeloLISTA.get(jl_series.getSelectedIndex())).getTemp();
+            users.get(c).getFavo().add(new Series(id, nombre, categoria, duracion, rating, productora, director, temp));
+            try {
+                escribirArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             int centinela = -1;
             for (int i = 0; i < raiz.getChildCount(); i++) {
                 if (raiz.getChildAt(i).toString().equals(categoria)) {
@@ -1033,61 +1109,85 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4MouseClicked
 
     private void jl_pelieliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jl_pelieliMouseClicked
-        jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());        
+        jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());
     }//GEN-LAST:event_jl_pelieliMouseClicked
 
     private void jm_eliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jm_eliminarMouseClicked
-         if(jl_pelieli.getSelectedIndex()>=0){
-              Peliculas Persona = new Peliculas();
-            DefaultListModel modeloLISTA = (DefaultListModel)jl_pelieli.getModel();
+        if (jl_pelieli.getSelectedIndex() >= 0) {
+            Peliculas Persona = new Peliculas();
+            DefaultListModel modeloLISTA = (DefaultListModel) jl_pelieli.getModel();
             String name = ((Peliculas) modeloLISTA.get(jl_personas.getSelectedIndex())).getNombre();
             modeloLISTA.remove(jl_pelieli.getSelectedIndex());
-            
-             
-            
-         }
+
+        }
     }//GEN-LAST:event_jm_eliminarMouseClicked
 
     private void jm_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jm_eliminarActionPerformed
-                 if(jl_pelieli.getSelectedIndex()>=0){
-              Peliculas Persona = new Peliculas();
-            DefaultListModel modeloLISTA = (DefaultListModel)jl_pelieli.getModel();
+        if (jl_pelieli.getSelectedIndex() >= 0) {
+            Peliculas Persona = new Peliculas();
+            DefaultListModel modeloLISTA = (DefaultListModel) jl_pelieli.getModel();
             modeloLISTA.remove(jl_pelieli.getSelectedIndex());
-                 }
+        }
     }//GEN-LAST:event_jm_eliminarActionPerformed
 
     private void jl_serieeliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jl_serieeliMouseClicked
-        
-        jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());        
-        
+
+        jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());
+
     }//GEN-LAST:event_jl_serieeliMouseClicked
 
     private void jm1_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jm1_eliminarActionPerformed
-         if(jl_pelieli.getSelectedIndex()>=0){
-              Series Series = new Series();
-            DefaultListModel modeloLISTA = (DefaultListModel)jl_serieeli.getModel();
+        if (jl_pelieli.getSelectedIndex() >= 0) {
+            Series Series = new Series();
+            DefaultListModel modeloLISTA = (DefaultListModel) jl_serieeli.getModel();
             modeloLISTA.remove(jl_serieeli.getSelectedIndex());
-                 }
+        }
     }//GEN-LAST:event_jm1_eliminarActionPerformed
     public void Registro() {
         File archivito = null;
         Scanner sc = null;
         FileWriter fw = null;
         BufferedWriter bw = null;
+
         try {
             archivito = new File("./user.txt");
             fw = new FileWriter(archivito, true);
             bw = new BufferedWriter(fw);
-            bw.write(jt_usuario.getText() + ";");
-            bw.write(jt_correo.getText() + ";");
-            bw.write(jt_pass.getText() + ";");
-            bw.write(jt_fecha.getText() + ";");
-            bw.write(Integer.parseInt(jt_tarjeta.getText()) + ";");
-
-            bw.flush();
+            users.add(new Usuarios(jt_usuario.getText(), jt_correo.getText(), jt_pass.getText(), jt_fecha.getText(), jt_tarjeta.getText()));
+            escribirArchivo();
             jd_registro.setVisible(false);
         } catch (Exception e) {
         }
+    }
+
+    public void escribirArchivo() throws IOException {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
+        try {
+            File archivo = new File("./user.txt");
+            fw = new FileWriter(archivo, false);
+            bw = new BufferedWriter(fw);
+            for (Usuarios t : users) {
+                bw.write(t.getUser() + ";");
+                bw.write(t.getContra() + ";");
+                bw.write(t.getCorreo() + ";");
+
+                for (Peliculas h : t.getFav()) {
+
+                    bw.write(h.getId() + ",");
+                }
+                bw.write(";");
+                for (Series h : t.getFavo()) {
+                    bw.write(h.getId() + ",");
+                }
+                bw.write(";");
+            }
+            bw.flush();
+        } catch (Exception e) {
+        }
+        bw.close();
+        fw.close();
     }
 
     /**
@@ -1225,4 +1325,5 @@ public class Principal extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     Usuarios u = new Usuarios();
     ArrayList<Usuarios> users = new ArrayList();
+    int c;
 }
